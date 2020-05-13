@@ -9,10 +9,18 @@ public class DominoTile {
     private int left;
     private int right;
 
+    @Override
+    public String toString() {
+        return "Domino: {" +
+                "left=" + left +
+                ", right=" + right +
+                '}';
+    }
+
     public DominoTile() {
         Random x = new Random();
-        left = 1+x.nextInt(5);
-        right = 1+x.nextInt(5);
+        left = 1+x.nextInt(3);
+        right = 1+x.nextInt(3);
     }
 
     public DominoTile(int l, int r) throws InvalidDotNumberException {
@@ -71,9 +79,9 @@ public class DominoTile {
 
 
 
-
-
 // 2. rész
+
+
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -98,7 +106,13 @@ public class DominoGame {
 
     }
 
-
+    @Override
+    public String toString() {
+        return   "\n" + dominos + "\n" + "\n" +
+                "Egyes " + d1 + "\n" +
+                "Kettes " + d2 + "\n" +
+                "Hármas " + d3   ;
+    }
 
     public DominoTile getTileOption(int number) {
         if(number == 1 ) {
@@ -115,11 +129,21 @@ public class DominoGame {
     }
 
     public void continueWithOption(int number) throws InvalidMoveException {
-        DominoTile last = dominos .get(dominos.size() - 1);
+        DominoTile last = dominos.get(dominos.size() - 1);
         boolean canContinue = false;
-        canContinue = last.canConnectFromLeft(getTileOption(number));
+        canContinue = getTileOption(number).canConnectFromLeft(last);
         if(canContinue) {
             dominos.add(getTileOption(number));
+            if (number == 1) {
+                d1 = new DominoTile();
+            }
+            else {
+                if (number == 2) {
+                    d2 = new DominoTile();
+                }
+                else
+                    d3 = new DominoTile();
+            }
         }
         else
             throw new InvalidMoveException();
@@ -127,10 +151,10 @@ public class DominoGame {
 
     public boolean isGameOver() {
         DominoTile last = dominos.get(dominos.size()-1);
-        System.out.println(last);
-        if (last.canConnectFromLeft(getTileOption(1)) == false &&
-                last.canConnectFromLeft(getTileOption(2)) == false &&
-                last.canConnectFromLeft(getTileOption(3)) == false) {   // ha egyik se tud csatlakozni akkor game over
+        //System.out.println(last);
+        if (getTileOption(1).canConnectFromLeft(last) == false &&
+                getTileOption(2).canConnectFromLeft(last) == false &&
+                getTileOption(3).canConnectFromLeft(last) == false) {   // ha egyik se tud csatlakozni akkor game over
             return true;
         }
         else
@@ -157,10 +181,3 @@ public class DominoGame {
         System.out.println("Game over");
     }
 }
-
-
-
-
-
-
-
