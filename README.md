@@ -71,3 +71,96 @@ public class DominoTile {
 
 
 
+
+
+// 2. rész
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class InvalidMoveException extends Exception {
+
+}
+public class DominoGame {
+
+    DominoTile starter;
+    DominoTile d1;
+    DominoTile d2;
+    DominoTile d3;
+    ArrayList<DominoTile> dominos = new ArrayList<DominoTile>();
+
+    public DominoGame() {
+        starter = new DominoTile();
+        d1 = new DominoTile();
+        d2 = new DominoTile();
+        d3 = new DominoTile();
+        dominos.add(starter);
+
+    }
+
+
+
+    public DominoTile getTileOption(int number) {
+        if(number == 1 ) {
+            return d1;
+        }
+        else {
+            if(number == 2) {
+                return d2;
+            }
+            else
+                return d3;
+        }
+
+    }
+
+    public void continueWithOption(int number) throws InvalidMoveException {
+        DominoTile last = dominos .get(dominos.size() - 1);
+        boolean canContinue = false;
+        canContinue = last.canConnectFromLeft(getTileOption(number));
+        if(canContinue) {
+            dominos.add(getTileOption(number));
+        }
+        else
+            throw new InvalidMoveException();
+    }
+
+    public boolean isGameOver() {
+        DominoTile last = dominos.get(dominos.size()-1);
+        System.out.println(last);
+        if (last.canConnectFromLeft(getTileOption(1)) == false &&
+                last.canConnectFromLeft(getTileOption(2)) == false &&
+                last.canConnectFromLeft(getTileOption(3)) == false) {   // ha egyik se tud csatlakozni akkor game over
+            return true;
+        }
+        else
+            return false;
+    }
+
+
+
+
+    public static void main(String[] args) {
+        DominoGame game = new DominoGame();
+        Scanner sc=new Scanner(System.in);
+        while(!game.isGameOver()) {
+            System.out.println(game);
+            System.out.print("Which domino should I use? (1-3) ");
+            int domino = sc.nextInt();
+            try{
+                game.continueWithOption(domino);
+            } catch (InvalidMoveException e) {
+                System.out.println("Domino "+game.getTileOption(domino)+" can not be used to continue.");
+            }
+        }
+        System.err.println(game);
+        System.out.println("Game over");
+    }
+}
+
+
+
+
+
+
+
