@@ -1,95 +1,73 @@
-import java.util.Arrays;
+import java.util.Random;
 
-class EmptyTowerException extends Exception{
 
-}
-
-class InvalidMoveException extends Exception{
+class InvalidDotNumberException extends Exception {
 
 }
 
-public class HanoiTower {
-    private int magassag = 3;
-    private int[] Torony = new int[magassag];
+public class DominoTile {
+    private int left;
+    private int right;
 
-
-    public HanoiTower() {
-        for (int i = 0; i < Torony.length; i++) {
-            Torony[i] = 0;
-        }
-
+    public DominoTile() {
+        Random x = new Random();
+        left = 1+x.nextInt(5);
+        right = 1+x.nextInt(5);
     }
 
-    public HanoiTower(int h) {
-        for (int i = 0; i < h; i++) {
-            magassag = h;
-            Torony[i] = h-i;
-        }
-    }
-
-    public int pop() throws EmptyTowerException {
-        int meret=0;
-        for (int i = magassag-1; i < -1; i--) {
-            if (Torony[i] > 0) {
-                meret = Torony[i];
-                Torony[i] = 0;
-                break;
-            }
-        }
-        if(meret == 0){
-            throw new EmptyTowerException();
-        }
-        else {
-            return meret;
+    public DominoTile(int l, int r) throws InvalidDotNumberException {
+        left = l;
+        right = r;
+        if(left >6 || left <1 || right>6 || right < 1) {
+            throw new InvalidDotNumberException();
         }
     }
 
-    public void put(int size) throws InvalidMoveException {
-        for (int i = 0; i < Torony.length ; i++) {
-            if(Torony[i] ==0) {
-                Torony[i] = size;
-                break;
-            }
-            else
-                if(Torony[i] < size)
-                    throw new InvalidMoveException();
-        }
+    public void rotate() {
+        int buffer;
+        buffer = left;
+        left = right;
+        right = buffer;
     }
 
+     public boolean canConnectFromLeft(DominoTile other) {
+        if(other.left == right){
+            return true;
+        }
+        else
+            return false;
+     }
 
     public static void main(String[] args) {
-        HanoiTower test= new HanoiTower();
-        try{
-            test.pop();
-            System.err.println("[ERROR] pop succesful from empty tower");
-        } catch (EmptyTowerException e){
-            System.err.println("[OK] pop unsuccesful from empty tower");
+        try {
+            DominoTile d11=new DominoTile(1,1);
+            System.out.println("[OK] [1|1] domino tile created successfully.");
+            try {
+                DominoTile d12=new DominoTile(1,2);
+                System.out.println("[OK] [1|2] domino tile created successfully.");
+                try {
+                    DominoTile d17=new DominoTile(1,7);
+                    System.err.println("[ERROR] [1|7] domino tile created successfully.");
+                } catch (InvalidDotNumberException e){
+                    System.out.println("[OK] Domino [1|7] could not be created.");
+                }
+                if(d11.canConnectFromLeft(d12)) System.out.println("[OK] [1|1] can connect to [1|2]");
+                else System.err.println("[ERROR] [1|1] can not connect to [1|2]");
+                if(!d12.canConnectFromLeft(d11)) System.out.println("[OK] [1|2] cannot connect to [1|1]");
+                else System.err.println("[ERROR] [1|2] can connect to [1|1]");
+                d12.rotate();
+                if(!d11.canConnectFromLeft(d12)) System.out.println("[OK] [1|1] cannot connect to [2|1]");
+                else System.err.println("[ERROR] [1|1] can not connect to [2|1]");
+                if(d12.canConnectFromLeft(d11)) System.out.println("[OK] [2|1] can connect to [1|1]");
+                else System.err.println("[ERROR] [2|1] cannot connect to [1|1]");
+            } catch (InvalidDotNumberException e){
+                System.err.println("[ERROR] Domino [1|2] could not be created.");
+            }
+        } catch (InvalidDotNumberException e){
+            System.err.println("[ERROR] Domino [1|1] could not be created.");
         }
-        try{
-            test.put(6);
-            System.err.println("[OK] put 6 succesful on empty tower");
-        } catch (InvalidMoveException e){
-            System.err.println("[ERROR] put 6 succesful on empty tower");
-        }
-        try{
-            test.put(4);
-            System.err.println("[OK] put 4 succesful on tower [6]");
-        } catch (InvalidMoveException e){
-            System.err.println("[ERROR] put 4 succesful on tower [6]");
-        }
-        try{
-            test.put(1);
-            System.err.println("[OK] put 1 succesful on tower [6 4]");
-        } catch (InvalidMoveException e){
-            System.err.println("[ERROR] put 1 succesful on tower [6 4]");
-        }
-        try{
-            test.put(2);
-            System.err.println("[ERROR] put 2 succesful on tower [6 4 1]");
-        } catch (InvalidMoveException e){
-            System.err.println("[OK] put 1 succesful on tower [6 4 1]");
-        }
-        System.out.println(Arrays.toString(test.Torony));
     }
-
 }
+
+
+
